@@ -15,6 +15,7 @@ const TaskDetailScreen = ({ route }) => {
     try {
       // Fetch task details from your backend API based on taskId
       const response = await axios.get(`https://taskflow-0pva.onrender.com/api/tasks/${taskId}`);
+      console.log(response);
       setTaskDetails(response.data);
     } catch (error) {
       console.error('Error fetching task details:', error);

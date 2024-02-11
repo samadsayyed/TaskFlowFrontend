@@ -1,29 +1,40 @@
 // screens/TeamsAndTasksScreen.js
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, FlatList, Button, StyleSheet,TouchableOpacity } from 'react-native';
-import AuthContext from '../context/AuthContext';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import AuthContext from "../context/AuthContext";
+import axios from "axios";
 
-const TeamsAndTasksScreen = ({navigation}) => {
-  const { isAdmin } = useContext(AuthContext);
-  const [teams, setTeams] = useState([]);
-  const [tasks, setTasks] = useState([]);
+const TeamsAndTasksScreen = ({ navigation }) => {
+  const { isAdmin,user,admin } = useContext(AuthContext);
+  const [teams, setTeams] = useState();
+  const [tasks, setTasks] = useState();
 
   useEffect(() => {
     fetchTeamsAndTasks();
   }, []);
-
+console.log(user,"user");
   const fetchTeamsAndTasks = async () => {
     try {
       // Fetch teams from your backend API
-      const teamsResponse = await axios.get('https://taskflow-0pva.onrender.com/api/teams');
+      const teamsResponse = await axios.get(
+        "https://taskflow-0pva.onrender.com/api/teams"
+      );
       setTeams(teamsResponse.data);
 
       // Fetch tasks from your backend API
-      const tasksResponse = await axios.get('https://taskflow-0pva.onrender.com/api/tasks');
+      const tasksResponse = await axios.get(
+        "https://taskflow-0pva.onrender.com/api/tasks"
+      );
       setTasks(tasksResponse.data);
     } catch (error) {
-      console.error('Error fetching teams and tasks:', error);
+      console.error("Error fetching teams and tasks:", error);
     }
   };
 
@@ -33,7 +44,7 @@ const TeamsAndTasksScreen = ({navigation}) => {
       await axios.delete(`your-backend-api-url/teams/${teamId}`);
       fetchTeamsAndTasks(); // Refresh teams and tasks after deletion
     } catch (error) {
-      console.error('Error deleting team:', error);
+      console.error("Error deleting team:", error);
     }
   };
 
@@ -43,53 +54,76 @@ const TeamsAndTasksScreen = ({navigation}) => {
       await axios.delete(`your-backend-api-url/tasks/${taskId}`);
       fetchTeamsAndTasks(); // Refresh teams and tasks after deletion
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error("Error deleting task:", error);
     }
   };
   const navigateToTeamDetail = (teamId) => {
     // Navigate to the TeamDetail screen with the selected teamId
-    navigation.navigate('TeamDetail', { teamId });
+    navigation.navigate("TeamDetail", { teamId });
   };
 
   const navigateToTaskDetail = (taskId) => {
     // Navigate to the TaskDetail screen with the selected taskId
-    navigation.navigate('TaskDetail', { taskId });
+    navigation.navigate("TaskDetail", { taskId });
   };
+
+  console.log(admin,"admin status");
   return (
     <View style={styles.container}>
       {/* ... existing code */}
 
       <Text style={styles.sectionHeader}>Teams</Text>
-      <FlatList
-        data={teams}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigateToTeamDetail(item._id)}>
-            <View style={styles.item}>
-              <Text>{item.name}</Text>
-              {isAdmin && (
-                <Button title="Delete" onPress={() => handleDeleteTeam(item._id)} />
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+      {teams ? (
+        <FlatList
+          data={teams}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => navigateToTeamDetail(item._id)}>
+              <View style={styles.item}>
+                <Text>{item.name}</Text>
+                {admin && (
+                  <Button
+                    title="Delete"
+                    onPress={() => handleDeleteTeam(item._id)}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      ) : (
+        <Text>Loading</Text>
+      )}
 
       <Text style={styles.sectionHeader}>Tasks</Text>
-      <FlatList
+     {tasks?(<FlatList
         data={tasks}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigateToTaskDetail(item._id)}>
             <View style={styles.item}>
-              <Text>{item.title}</Text>
+              <Text style={{
+                color:"white",
+                height:60,
+                width:"100%",
+                borderRadius:10,
+                backgroundColor:"grey",
+                textAlign:"center",
+                justifyContent:"center",
+                alignItems:'center'
+              }}>{item.title}</Text>
               {isAdmin && (
-                <Button title="Delete" onPress={() => handleDeleteTask(item._id)} />
+                <Button
+                  title="Delete"
+                  onPress={() => handleDeleteTask(item._id)}
+                />
               )}
             </View>
           </TouchableOpacity>
         )}
-      />
+      />):(
+        <Text>Loading</Text>
+      )}
     </View>
   );
 };
@@ -97,12 +131,12 @@ const TeamsAndTasksScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 16,
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   adminControls: {
@@ -110,14 +144,14 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
   },
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
 });
