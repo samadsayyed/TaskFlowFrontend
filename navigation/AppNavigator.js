@@ -11,7 +11,8 @@ import TaskDetailScreen from '../screens/TaskDetailScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import Navbar from '../components/Navbar';
 import ProfileScreen from '../screens/ProfileScreen';
-import NewTeamForm from '../screens/NewTask';
+import NewTeamForm from '../screens/NewTeam';
+import NewTaskForm from '../screens/NewTaskForm';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Register" component={RegisterScreen} /> 
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="NewTeam" component={NewTeamForm} />
+        <Stack.Screen name="NewTask" component={NewTaskForm} />
       </Stack.Navigator>
       <Navbar/>
     </NavigationContainer>

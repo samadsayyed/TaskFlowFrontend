@@ -7,54 +7,68 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ToastAndroid,
+  Pressable,
 } from "react-native";
 import AuthContext from "../context/AuthContext";
 import axios from "axios";
+import Delete from "react-native-vector-icons/Entypo";
 
 const TeamsAndTasksScreen = ({ navigation }) => {
-  const { isAdmin,user,admin } = useContext(AuthContext);
+  const { user, admin } = useContext(AuthContext);
   const [teams, setTeams] = useState();
   const [tasks, setTasks] = useState();
-
+  const [loading, setLoading] = useState();
+  const isAdmin = user.role === "admin";
+  // if (!user) {
+  //   ToastAndroid.show("Login first", ToastAndroid.SHORT);
+  //   navigation.navigate("Login");
+  // }
   useEffect(() => {
     fetchTeamsAndTasks();
-  }, []);
-console.log(user,"user");
+  });
   const fetchTeamsAndTasks = async () => {
+    setLoading(true)
     try {
-      // Fetch teams from your backend API
-      const teamsResponse = await axios.get(
-        "https://taskflow-0pva.onrender.com/api/teams"
-      );
+      const [teamsResponse, tasksResponse] = await Promise.all([
+        axios.get("https://taskflow-0pva.onrender.com/api/teams"),
+        axios.get("https://taskflow-0pva.onrender.com/api/tasks"),
+      ]);
       setTeams(teamsResponse.data);
-
-      // Fetch tasks from your backend API
-      const tasksResponse = await axios.get(
-        "https://taskflow-0pva.onrender.com/api/tasks"
-      );
       setTasks(tasksResponse.data);
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching teams and tasks:", error);
+      ToastAndroid.show("Cannot fetch teams and tasks", ToastAndroid.SHORT);
+      setLoading(false)
     }
   };
 
   const handleDeleteTeam = async (teamId) => {
+    setLoading(true)
     try {
-      // Delete team using your backend API
-      await axios.delete(`your-backend-api-url/teams/${teamId}`);
-      fetchTeamsAndTasks(); // Refresh teams and tasks after deletion
+      await axios.delete(
+        `https://taskflow-0pva.onrender.com/api/teams/${teamId}`
+      );
+      setLoading(false)
+      // fetchTeamsAndTasks(); // Refresh teams and tasks after deletion
     } catch (error) {
       console.error("Error deleting team:", error);
+      setLoading(false)
     }
   };
 
   const handleDeleteTask = async (taskId) => {
+    setLoading(true)
     try {
       // Delete task using your backend API
-      await axios.delete(`your-backend-api-url/tasks/${taskId}`);
+      await axios.delete(
+        `https://taskflow-0pva.onrender.com/api/tasks/${taskId}`
+      );
       fetchTeamsAndTasks(); // Refresh teams and tasks after deletion
+    setLoading(false)
     } catch (error) {
       console.error("Error deleting task:", error);
+    setLoading(false)
     }
   };
   const navigateToTeamDetail = (teamId) => {
@@ -67,7 +81,6 @@ console.log(user,"user");
     navigation.navigate("TaskDetail", { taskId });
   };
 
-  console.log(admin,"admin status");
   return (
     <View style={styles.container}>
       {/* ... existing code */}
@@ -80,12 +93,11 @@ console.log(user,"user");
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigateToTeamDetail(item._id)}>
               <View style={styles.item}>
-                <Text>{item.name}</Text>
-                {admin && (
-                  <Button
-                    title="Delete"
-                    onPress={() => handleDeleteTeam(item._id)}
-                  />
+                <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                {isAdmin && (
+                  <Pressable onPress={() => handleDeleteTeam(item._id)} disabled={loading}>
+                    <Delete size={20} name="trash" disabled={loading}/>
+                  </Pressable>
                 )}
               </View>
             </TouchableOpacity>
@@ -96,32 +108,30 @@ console.log(user,"user");
       )}
 
       <Text style={styles.sectionHeader}>Tasks</Text>
-     {tasks?(<FlatList
-        data={tasks}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigateToTaskDetail(item._id)}>
-            <View style={styles.item}>
-              <Text style={{
-                color:"white",
-                height:60,
-                width:"100%",
-                borderRadius:10,
-                backgroundColor:"grey",
-                textAlign:"center",
-                justifyContent:"center",
-                alignItems:'center'
-              }}>{item.title}</Text>
-              {isAdmin && (
-                <Button
-                  title="Delete"
-                  onPress={() => handleDeleteTask(item._id)}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        )}
-      />):(
+      {tasks ? (
+        <FlatList
+          data={tasks}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => navigateToTaskDetail(item._id)}>
+              <View style={styles.item}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                >
+                  {item.title}
+                </Text>
+                {isAdmin && (
+                  <Pressable onPress={() => handleDeleteTask(item._id)} disabled={loading}>
+                    <Delete size={20} name="trash" disabled={loading}/>
+                  </Pressable>
+                )}
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      ) : (
         <Text>Loading</Text>
       )}
     </View>
@@ -133,6 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 16,
+    backgroundColor: "white",
   },
   header: {
     fontSize: 24,
@@ -143,7 +154,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionHeader: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
@@ -153,6 +164,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+    backgroundColor: "#d5b9eb",
+    padding: 10,
+    borderRadius: 10,
   },
 });
 
