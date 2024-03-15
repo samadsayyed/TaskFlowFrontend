@@ -4,7 +4,7 @@
     "slug": "TaskManagerApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.jpg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -22,7 +22,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.samadsayyed.TaskManagerApp"
+      "package": "com.samadsayyed.TaskManagerApp",
+      "version":"1.0.0",
+      "versionCode":1
     },
     "web": {
       "favicon": "./assets/favicon.png"

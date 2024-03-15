@@ -8,21 +8,21 @@ const TeamDetailScreen = ({ route }) => {
   const { teamId } = route.params;
   const [teamDetails, setTeamDetails] = useState(null);
 
-  useEffect(() => {
-    fetchTeamDetails();
-  }, []);
-
+  
   const fetchTeamDetails = async () => {
     try {
       // Fetch team details from your backend API based on teamId
       const response = await axios.get(
         `https://taskflow-0pva.onrender.com/api/teams/${teamId}`
-      );
-      setTeamDetails(response.data);
-    } catch (error) {
-      console.error("Error fetching team details:", error);
-    }
-  };
+        );
+        setTeamDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching team details:", error);
+      }
+    };
+    useEffect(() => {
+      fetchTeamDetails();
+    }, []);
   return (
     <View style={styles.container}>
 
@@ -70,7 +70,7 @@ const TeamDetailScreen = ({ route }) => {
                       }}
                       // key={users._id}
                     >
-                      {i.username}
+                      {i?.username}
                     </Text>
                     <Text>{i.email}</Text>
                   </View>

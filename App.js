@@ -1,16 +1,33 @@
 // App.js
-import React, { useState, useMemo, useEffect } from "react";
-import AppNavigator from "./navigation/AppNavigator";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import AuthContext from "./context/AuthContext";
-import { ToastAndroid } from "react-native";
-import Toast from "react-native-toast-message";
-import Navbar from "./components/Navbar";
+import AppNavigator from "./navigation/AppNavigator";
 
 const App = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [admin, setAdmin] = useState(false);
-  const [user, setUser] = useState("");
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [user, setUser] = useState();
+
+
+  useEffect(() => {
+    const fetchUser = async()=>{
+      try {
+        const {data} = await axios.get("https://taskflow-0pva.onrender.com/api/profile")
+        console.log(data,"data");
+        const {user} = data;
+        setUser(user)
+        if (user.role == "admin") {
+          setAdmin(true);
+        }
+      } catch (error) {
+        
+      }
+    }
+    fetchUser()
+    console.log(user);
+  }, [])
+  
 
   const authContextValue = {
     setAuthenticated,
@@ -18,9 +35,7 @@ const App = () => {
     setAdmin,
     authenticated,
     user,
-    admin,
-    isEnabled,
-    setIsEnabled
+    admin
   };
 
   return (

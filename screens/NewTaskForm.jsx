@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  TextInput,
-  Button,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Pressable,
-  ToastAndroid,
-} from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import React, { useEffect, useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  ToastAndroid,
+  View
+} from "react-native";
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
 
@@ -47,15 +45,8 @@ const NewTaskForm = () => {
     fetchUsersAndTeams();
   }, []);
 
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
 
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || deadline;
-    setShowDatePicker(false);
-    setDeadline(currentDate);
-  };
+
 
   const createNewTask = async () => {
     setLoading(true);
@@ -95,9 +86,7 @@ const NewTaskForm = () => {
         onChangeText={setDescription}
         multiline
       />
-      <TouchableOpacity onPress={openDatePicker}>
         <Text style={styles.dateText}>Deadline: {deadline.toDateString()}</Text>
-      </TouchableOpacity>
       {/* {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -129,7 +118,7 @@ const NewTaskForm = () => {
         {users.map((user) => (
           <Picker.Item
             key={user.userId}
-            label={user.username}
+            label={user?.username}
             style={{ fontSize: 15 }}
             value={user._id}
           />

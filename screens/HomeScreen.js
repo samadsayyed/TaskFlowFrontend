@@ -17,7 +17,7 @@ import Delete from "react-native-vector-icons/Entypo";
 
 const HomeScreen = ({ navigation }) => {
   const { user, setUser } = useContext(AuthContext);
-  const isAdmin = user.role === "admin";
+  const isAdmin = user?.role === "admin";
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
 
@@ -49,10 +49,11 @@ const HomeScreen = ({ navigation }) => {
     fetchUsers();
   }, [deleteHandler]);
 
-  //   if (!user) {
-  //   navigation.navigate("Login");
-  //   ToastAndroid.show("Login first", ToastAndroid.SHORT);
-  // }
+    if (!user) {
+    navigation.navigate("Login");
+    ToastAndroid.show("Login first home", ToastAndroid.SHORT);
+  }
+  
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -103,9 +104,9 @@ const HomeScreen = ({ navigation }) => {
                     }}
                     key={users._id}
                   >
-                    {i.username}
+                    {i?.username}
                   </Text>
-                  <Text>{i.email}</Text>
+                  <Text>{i?.email}</Text>
                 </View>
                 {isAdmin && (
                   <View

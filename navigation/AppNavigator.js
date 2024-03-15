@@ -1,27 +1,27 @@
 // navigation/AppNavigator.js
-import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AuthContext from '../context/AuthContext';
-import LoginScreen from '../screens/LoginScreen';
-import HomeScreen from '../screens/HomeScreen';
-import TeamsAndTasksScreen from '../screens/TeamsAndTasksScreen';
-import TeamDetailScreen from '../screens/TeamDetailScreen';
-import TaskDetailScreen from '../screens/TaskDetailScreen';
-import RegisterScreen from '../screens/RegisterScreen';
+import React, { useContext } from 'react';
 import Navbar from '../components/Navbar';
-import ProfileScreen from '../screens/ProfileScreen';
-import NewTeamForm from '../screens/NewTeam';
+import AuthContext from '../context/AuthContext';
+import HomeScreen from '../screens/HomeScreen';
+import LoginScreen from '../screens/LoginScreen';
 import NewTaskForm from '../screens/NewTaskForm';
+import NewTeamForm from '../screens/NewTeam';
+import ProfileScreen from '../screens/ProfileScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import TaskDetailScreen from '../screens/TaskDetailScreen';
+import TeamDetailScreen from '../screens/TeamDetailScreen';
+import TeamsAndTasksScreen from '../screens/TeamsAndTasksScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const { isAuthenticated, isAdmin } = useContext(AuthContext);
-
+  const { isAuthenticated,setIsAuthenticated, isAdmin,user } = useContext(AuthContext);
+  
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isAuthenticated ? (isAdmin ? 'Admin' : 'Home') : 'Login'}>
+      <Stack.Navigator initialRouteName={user ? 'home' : 'Login'}>
         <Stack.Screen name="Login"  component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TeamsAndTasks" component={TeamsAndTasksScreen} />

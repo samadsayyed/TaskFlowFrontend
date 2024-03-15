@@ -9,12 +9,11 @@ const TaskDetailScreen = ({ route }) => {
   const { taskId } = route.params;
   const { login, admin, setUser, user, setAdmin, setAuthenticated } =
     useContext(AuthContext);
+    const [refresh,setRefresh] = useState(true)
   const [taskDetails, setTaskDetails] = useState();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchTaskDetails();
-  }, [updateTask]);
+ 
   const simplifyDeadline = (deadline) => {
     const date = new Date(deadline);
     return `${date.toDateString()} ${date.toLocaleTimeString([], {
@@ -29,11 +28,17 @@ const TaskDetailScreen = ({ route }) => {
         `https://taskflow-0pva.onrender.com/api/tasks/${taskId}`
       );
       setTaskDetails(response.data);
+      // setRefresh((prev)=>!prev)
     } catch (error) {
       console.error("Error fetching task details:", error);
+      // setRefresh((prev)=>!prev)
     }
   };
 
+  useEffect(() => {
+    fetchTaskDetails();
+  }, [refresh]);
+  
   const updateTask = async () => {
     ToastAndroid.show("Updating task...", ToastAndroid.SHORT);
     setLoading(true);
@@ -42,13 +47,15 @@ const TaskDetailScreen = ({ route }) => {
         `https://taskflow-0pva.onrender.com/api/tasks/${taskId}`
       );
       ToastAndroid.show("Task updated", ToastAndroid.SHORT);
-      setLoading(false);
+      setRefresh((prev)=>!prev)
+      // setLoading(false);
     } catch (error) {
       ToastAndroid.show("Some error occoured...", ToastAndroid.SHORT);
       setLoading(false);
+      setRefresh((prev)=>!prev)
     }
   };
-  const assignedUser = user.username === taskDetails?.assignedTo?.username;
+  const assignedUser = user?.username === taskDetails?.assignedTo?.username;
   return (
     <View style={styles.container}>
       {taskDetails?(<>

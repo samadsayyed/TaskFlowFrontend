@@ -13,7 +13,7 @@ import AuthContext from "../context/AuthContext";
 import axios from "axios";
 
 const ProfileScreen = ({ navigation }) => {
-  const { user, setUser, isEnabled, setIsEnabled } = useContext(AuthContext);
+  const { user, setUser,isAuthenticated} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
   const logoutHandler = async () => {
@@ -23,20 +23,22 @@ const ProfileScreen = ({ navigation }) => {
         "https://taskflow-0pva.onrender.com/api/logout"
       );
       setLoading(false);
-      setUser(undefined)
+      ToastAndroid.show("Logged out", ToastAndroid.SHORT);
+      setUser(null)
+      navigation.navigate("Login");
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      ToastAndroid.show("No user", ToastAndroid.SHORT);
       setLoading(false);
     }
   };
-  if (!user) {
+  
+  if (!user?.username) {
     navigation.navigate("Login");
-    ToastAndroid.show("Login First", ToastAndroid.SHORT);
+    ToastAndroid.show("Login First profile", ToastAndroid.SHORT);
   }
+  
 
-  const toggleSwitch = () => {
-    setIsEnabled(!isEnabled);
-  };
   return (
     <>
       <View style={styles.container}>
@@ -47,26 +49,10 @@ const ProfileScreen = ({ navigation }) => {
             }}
             style={styles.profilePic}
           />
-          <Text style={styles.username}>{user.username}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.username}>{user?.username}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
         </View>
-        <View>
-          <Text style={{ fontWeight: "600" }}>Task Notification:{"\n"}</Text>
-          <View style={styles.Notification}>
-            <Text style={{ height: "45%", fontWeight: "600" }}>
-              Enable Notification
-            </Text>
-            <View>
-              <Switch
-                trackColor={{ false: "white", true: "black" }}
-                thumbColor={isEnabled ? "grey" : "purple"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-              />
-            </View>
-          </View>
-        </View>
+    
         <Pressable disabled={loading} style={styles.button} onPress={logoutHandler}>
           <Text style={styles.text}>Signout</Text>
         </Pressable>

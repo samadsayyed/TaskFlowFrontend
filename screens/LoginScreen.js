@@ -16,11 +16,11 @@ import LoginImg from "../assets/1.png";
 import AuthContext from "../context/AuthContext";
 
 const LoginScreen = ({ navigation }) => {
-  const { login, admin, setUser, user, setAdmin, setAuthenticated } =
-    useContext(AuthContext);
+  const { login, admin, setUser, user, setAdmin, setAuthenticated } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
   const handleLogin = async () => {
     setLoading(true);
     ToastAndroid.show("Loading...", ToastAndroid.SHORT);
@@ -35,10 +35,7 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
       const userinfo = data.user;
       setUser(userinfo);
-      if (user.role == "admin") {
-        setAdmin(true);
-      }
-      setAuthenticated(true);
+
       ToastAndroid.show("Trying to login", ToastAndroid.SHORT);
       navigation.navigate("Profile");
     } catch (error) {
@@ -47,6 +44,10 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  if(user){
+    navigation.navigate("Home");
+  }
+  
   return (
     <View style={styles.container}>
       <Image
@@ -65,7 +66,6 @@ const LoginScreen = ({ navigation }) => {
             color={"black"}
             size={40}
             style={{ marginRight: 12 }}
-            onPress={this.loginWithFacebook}
           />
           <TextInput
             style={styles.input}
@@ -81,7 +81,6 @@ const LoginScreen = ({ navigation }) => {
             color={"black"}
             size={35}
             style={{ marginRight: 14 }}
-            onPress={this.loginWithFacebook}
           />
           <TextInput
             style={styles.input}
